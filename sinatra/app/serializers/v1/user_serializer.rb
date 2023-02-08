@@ -1,7 +1,11 @@
 module Api
   module V1
     class UserSerializer < BaseSerializer
-      attributes :name, :email, :username, :token
+      attribute :name do 
+        object.full_name
+      end
+
+      attributes :email, :username, :token
     end
   end
 end

@@ -5,18 +5,26 @@ module Api
         get '/user' do
           env['warden'].authenticate!(:access_token)
 
-          @user = get_user_by_token
+          @user = UserDecorator.new(user_by_token)
           
-          JSONAPI::Serializer.serialize(@user, namespace: Api::V1).to_json
+          JSONAPI::Serializer.serialize(
+            @user,
+            namespace: Api::V1,
+            serializer: UserSerializer
+          ).to_json
         end
 
         patch '/user' do
           env['warden'].authenticate!(:access_token)
 
-          @user = get_user_by_token
+          @user = UserDecorator.new(user_by_token)
           
           if @user.update(user_params)
-            JSONAPI::Serializer.serialize(@user, namespace: Api::V1).to_json
+            JSONAPI::Serializer.serialize(
+              @user, 
+              namespace: Api::V1,
+              serializer: UserSerializer
+            ).to_json
           else
             halt 422,
             {
@@ -32,7 +40,10 @@ module Api
           @user = get_user_by_token
           
           if @user.destroy
-            JSONAPI::Serializer.serialize(@user, namespace: Api::V1).to_json
+            JSONAPI::Serializer.serialize(
+              @user, 
+              namespace: Api::V1
+            ).to_json
           else
             halt 204,
             {
@@ -45,7 +56,7 @@ module Api
 
       private
 
-      def get_user_by_token
+      def user_by_token
         access_token = request.env['HTTP_AUTHORIZATION'].split(' ').last
         @user = UserQuery.find_by_token(access_token)
       end

@@ -26,10 +26,14 @@ module Api
         post '/cars' do
           env['warden'].authenticate!(:access_token)
 
-          @car = Car.new(car_params)
+          @car = CarDecorator.decorate(Car.new(car_params))
           
           if @car.save
-            JSONAPI::Serializer.serialize(@car, namespace: Api::V1).to_json
+            JSONAPI::Serializer.serialize(
+              @car,
+              namespace: Api::V1,
+              serializer: CarSerializer
+            ).to_json
           else
             halt 422, { code: '422', message: @car.errors.full_messages }.to_json
           end
@@ -38,10 +42,14 @@ module Api
         patch '/cars/:id' do
           env['warden'].authenticate!(:access_token)
 
-          @car = Car.find(params[:id])
+          @car = CarDecorator.decorate(Car.find(params[:id]))
 
           if @car.update(car_params)
-            JSONAPI::Serializer.serialize(@car, namespace: Api::V1).to_json
+            JSONAPI::Serializer.serialize(
+              @car,
+              namespace: Api::V1,
+              serializer: CarSerializer
+            ).to_json
           else
             halt 422, { code: '422', message: @car.errors.full_messages }.to_json
           end
