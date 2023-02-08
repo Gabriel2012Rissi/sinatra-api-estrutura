@@ -1,10 +1,12 @@
 class UserQuery
   module Scopes
     def by_email(email)
+      return nil if email.blank?
       find_by(email: email)
     end
 
     def by_token(token)
+      return nil if token.blank?
       find_by(token: token)
     end
   end
