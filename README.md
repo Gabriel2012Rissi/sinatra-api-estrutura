@@ -50,7 +50,7 @@ Rode o servidor
 $ make up
 ```
 
-E acesse a página http://localhost:3000/ no seu navegador
+E acesse a página http://localhost:3000/api/v1/cars no seu navegador
 
 Se quiser acessar o console
 
